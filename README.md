@@ -19,27 +19,6 @@ A native macOS app for Intune administrators. Look up a user by UPN, see their I
 - **Verify** after the request: for every wipe or retire Intune accepted, the app reads the device back and tells you whether Intune registered the action.
 - **Audit** every run in a local JSON Lines file, with an in-app viewer.
 
-## Screenshots
-
-| Sign in | Search by UPN |
-|---|---|
-| ![Sign in](docs/images/sign-in.png) | ![Search by UPN](docs/images/search-upn.png) |
-
-| Devices and actions | App protection (MAM) |
-|---|---|
-| ![Devices](docs/images/devices.png) | ![App protection](docs/images/app-protection.png) |
-
-| Review | Confirmation |
-|---|---|
-| ![Review](docs/images/review.png) | ![Confirmation](docs/images/confirmation.png) |
-
-| Results | Audit log |
-|---|---|
-| ![Results](docs/images/results.png) | ![Audit log](docs/images/audit-log.png) |
-
-| Simulation mode | Settings |
-|---|---|
-| ![Simulation mode](docs/images/simulation.png) | ![Settings](docs/images/settings.png) |
 
 ## Requirements
 
