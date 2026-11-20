@@ -1,54 +1,143 @@
-# Device Offboarding (macOS)
+# Device Offboarding
 
-Native SwiftUI console for safely offboarding a user's devices from Microsoft Intune.
-Auth: OAuth 2.0 Authorization Code + PKCE through the default browser and a loopback redirect (`http://localhost`) against Entra ID. Public client, delegated permissions, no client secret, tokens kept in memory only.
+A native macOS app for Intune administrators. Look up a user by UPN, see their Intune-managed devices and app protection registrations, and offboard them asset by asset: Wipe, Retire, Delete, or MAM selective wipe. Simulation by default, everything runs locally: no server, no account other than your own Entra sign-in, no client secret, and no third-party dependencies.
 
-## Configuration
-The app contains no tenant or app IDs. Create the Entra app registration (`docs/EntraAppRegistration.md`), then enter its Application (client) ID and Directory (tenant) ID in the app's Settings (a sheet opens on first launch; ⌘, later). Settings can also be pushed with a configuration profile (`EntraClientId`, `EntraTenantId` in the `com.example.deviceoffboarding` domain). Change `PRODUCT_BUNDLE_IDENTIFIER` in the Xcode project and `identifier` in `scripts/build-pkg.sh` to your own reverse-DNS identifier before distributing.
+![Devices](docs/images/devices.png)
 
-## Layout
-- `Sources/OffboardingCore` – Core library (Foundation, CryptoKit for PKCE): models, logging, OAuth client, Graph client, services. Unit-tested.
-- `Sources/IntuneOffboarding` – SwiftUI app: `App/`, `Authentication/` (browser + loopback sign-in), `Views/`, `ViewModels/`.
-- `DeviceOffboarding.xcodeproj` – the app target (local `OffboardingCore` package, ad-hoc signing with hardened runtime, no sandbox, no entitlements, no third-party dependencies).
-- `docs/EntraAppRegistration.md` – Entra setup checklist.
+*Find the user, pick an action per device. Every asset starts at No action. Replace the screenshots in `docs/images/` with your own.*
 
-## Build
-    swift test                         # core tests
-    open DeviceOffboarding.xcodeproj   # no team needed: the app is ad-hoc signed; pick "My Mac", then Run
+> Not affiliated with or endorsed by Microsoft. Microsoft Intune, Entra and Microsoft Graph are trademarks of Microsoft Corporation.
 
+## What it does
 
-The app is deliberately unsigned (ad-hoc only, required to run on Apple Silicon). Sign-in opens your default browser and returns to `http://localhost:<random port>`; tokens are held in memory only, so you sign in again after each launch. If the macOS firewall asks whether the app may accept incoming connections, allow it (the listener only accepts connections from this Mac).
+- **Search** a user by exact UPN. The identity card (name, UPN, Entra ID) must be confirmed before any device is listed. No fuzzy matching.
+- **Discover** the user's Intune-managed devices and app protection (MAM) registrations. They load independently, so a failure in one never hides the other.
+- **Choose** an action per asset: **Wipe**, **Retire**, **Delete** record or **No action** for devices, **Selective wipe** or **No action** for MAM. Windows wipes can keep enrollment data and user data.
+- **Review** a live page that lists exactly what will be sent. Any change clears your confirmation.
+- **Confirm** with an acknowledgement. A plan with a wipe also needs a typed phrase (`WIPE <n>`), and wipes, deletes and selective wipes each get a second confirmation alert.
+- **Run** in simulation (nothing can change) or in production (opt-in per user). The app re-checks the user and every asset right before sending.
+- **Verify** after the request: for every wipe or retire Intune accepted, the app reads the device back and tells you whether Intune registered the action.
+- **Audit** every run in a local JSON Lines file, with an in-app viewer.
 
-## Status
-- Phase 1 – foundation, models, redacting logger: done.
-- Phase 2 – sign-in: Authorization Code + PKCE in the default browser with a loopback redirect (replaced MSAL, whose broker path needs a keychain entitlement an unsigned app cannot have), tenant lock via the ID token, admin/tenant header, `verifyStillAuthenticated` (forced refresh) before destructive operations: needs a first run on a Mac.
+## Screenshots
 
-- Phase 3 – `GraphClient` (GET, pagination, 429/Retry-After, 5xx and network retry, paging-link host check, admin-readable errors), `UserService` (exact UPN via `$filter`, handles 0/1/many results), search + identity confirmation UI: written, needs a first run.
+| Sign in | Search by UPN |
+|---|---|
+| ![Sign in](docs/images/sign-in.png) | ![Search by UPN](docs/images/search-upn.png) |
 
-- Phase 4 – read-only MDM discovery: `IntuneDeviceService` lists the per-user candidate ids (`$select=id`), then reads each full record by id and checks its `userId` against the user (the per-user list returned empty user fields on a real tenant); dedupe by Intune ID; device list UI with all spec fields and a list of left-out devices with reasons: needs a first run.
+| Devices and actions | App protection (MAM) |
+|---|---|
+| ![Devices](docs/images/devices.png) | ![App protection](docs/images/app-protection.png) |
 
-- Phase 5 – read-only MAM discovery: `MAMService` (`/users/{id}/managedAppRegistrations`, user check), per-device grouping by device tag, MAM list UI with its own load state (an MDM or MAM failure never hides the other). Project switched to an unsigned (ad-hoc) build. Written, needs a first run; new scope `DeviceManagementApps.Read.All` needs admin consent.
+| Review | Confirmation |
+|---|---|
+| ![Review](docs/images/review.png) | ![Confirmation](docs/images/confirmation.png) |
 
-- Phase 6 – simulation workflow: per-asset action selection (default No Action), plan + review screen, read-only revalidation of user and assets before running (`PlanValidator`), `SimulationExecutor` (has no Graph client, so it cannot write), live results with "No changes were made".
-- Phase 7 – confirmations: the Run button needs an acknowledgement; a plan with MDM Wipe also needs the typed phrase `WIPE <n>` and a second confirmation in a SwiftUI alert that lists the devices. The UI locks at once on Run (double-submit guard). Rules live in `ConfirmationPolicy` (tested).
-- Phase 8 – MDM Wipe: `POST /v1.0/deviceManagement/managedDevices/{id}/wipe` with an explicit body (keepEnrollmentData/keepUserData/persistEsimDataPlan all false; `macOsUnlockCode` not sent), 204 = accepted. `GraphClient.post` sends once and never retries (5xx or lost reply = `outcomeUnknown`). `ProductionExecutor` re-verifies the session and re-reads each device before sending; a 204 is reported as "submitted", not "erased". Production mode is opt-in per user (alert) and falls back to simulation on user change/sign-out. New scope: `DeviceManagementManagedDevices.PrivilegedOperations.All`.
-- Phase 9 – Delete from Intune: `DELETE /v1.0/deviceManagement/managedDevices/{id}` (no body, 204; delegated `DeviceManagementManagedDevices.ReadWrite.All`, the only permission Microsoft documents for it). Separate from Wipe in code, UI, logs and confirmations; never chained. Same safeguards as wipe (session re-check, device re-read and fingerprint check, one request, no retry). After a 204, or after a lost reply, one read of the device settles the result: 404 = `succeeded`; otherwise `submitted` or `outcomeUnknown`. Wipes and deletes both get a second confirmation alert; only wipes need the typed phrase. Intune's own Delete action sends Retire (macOS, iOS, Windows) or Wipe (corporate Android), so the warning says the device may lose company data and management; Microsoft does not document what the raw Graph DELETE does to the device, so check this on a test device first.
-- Retire Device: `POST /v1.0/deviceManagement/managedDevices/{id}/retire` (no body, 204). Offered for every MDM device as a separate choice between Wipe and Delete, default No Action. Same safeguards as Wipe and Delete: re-read and fingerprint check right before sending, one request, never retried, a lost reply is "outcome unknown". A 204 is shown as "submitted": company data and management are removed when the device next checks in. Needs the second confirmation but no typed phrase (nothing is erased). No new permission: the app already requests both `DeviceManagementManagedDevices.PrivilegedOperations.All` and `.ReadWrite.All`; the delegated permission on the retire page could not be read from here, so confirm on a test device that you are not refused with 403.
-- Pending remote actions: each device is read with `deviceActionResults` (v1.0, read-only, returned only on GET by id with `$select`). The device list shows the last three remote actions and any wipe/retire/delete Intune has not finished (state pending or active; `managementState` such as wipePending is a second source). While one is in progress, a new Wipe or Retire on that device is hidden in the picker, flagged by the pre-run validation, and refused by the executor right before sending. Delete is blocked only by a pending wipe (deleting the record would drop the wipe); a pending retire does not block it. Failed or completed actions block nothing. Intune cannot cancel a pending action: wait for it, or delete a stale record in the Intune portal.
-- Mac wipes carry a six-digit unlock PIN (`macOsUnlockCode`, v1.0), like the Intune portal. Found on a real ADE Mac: without it Intune answered 204, then set the device to `wipeFailed` and never sent EraseDevice, while the action entry stayed "pending". The PIN is generated per wipe with the system CSPRNG, sent only for devices Graph reports as "macOS", validated as exactly six ASCII digits, and shown once on the results screen. It is not written to the message, the audit file or any log; Intune shows it on the device page until the wipe completes. Other platforms are unchanged. A device whose management state is `wipeFailed`/`retireFailed` is no longer blocked by a stale "pending" entry and is flagged red in the device list. `obliterationBehavior` is not sent (Intune default).
-- After the requests: for every wipe or retire Graph accepted (204), the app waits 10 seconds once, reads each device back and checks `deviceActionResults` for a NEW entry of that action (started after the request, 2-minute clock tolerance). Results and audit message say: registered, already failed in Intune, record already removed (404: the action most likely completed, as on the real Mac and Windows tests), NOT registered (Intune may have ignored it, as seen with a second wipe while an earlier one was pending), or could not confirm. Read-only; nothing is resent; the state stays "submitted".
-- Identity confirmed before every production run: after the confirmations and before validation, the app opens a fresh browser sign-in with `prompt=login` and `login_hint` = the signed-in admin. It counts only if the same account (Entra object id) in the same tenant signs in; otherwise, or if cancelled, the run ends with "Identity not confirmed, so nothing was sent". The new tokens replace the session tokens. Simulation runs are not affected. Whether MFA is asked again is decided by Conditional Access: a policy for this app with sign-in frequency "Every time" makes it mandatory.
-- App protection per phone: the App protection page shows one entry per phone or tablet instead of one per device tag, with model (e.g. "iPhone 17 Pro Max", raw identifier in the details), OS version (from the most recently synced app) and Entra device ID. Phones are recognised by the Entra device ID, which is **beta-only** (`GET /beta/users/{id}/managedAppRegistrations`: `azureADDeviceId`, `deviceModel`, `deviceManufacturer`; not in v1.0 as of November 2026). The beta call is isolated in `MAMDeviceDetailsService.swift`, read-only and optional: if it fails, the page falls back to one entry per tag and says so. Tags merge only when they report exactly one, identical Entra device ID. Selective wipe is unchanged: still v1.0 by device tag, one request per tag (choosing a phone with three tags sends three requests, each validated, sent once and audited); the re-read before sending uses v1.0 only. Selection: the phone's choice is applied to all its tags; Review shows one box per phone with every request listed. The per-run cap of 5 now counts only Wipe, Retire and Delete; selective wipes are not capped. No new permission: `DeviceManagementApps.Read.All` covers the beta read.
+| Results | Audit log |
+|---|---|
+| ![Results](docs/images/results.png) | ![Audit log](docs/images/audit-log.png) |
 
-## Graph notes
-- Phase 10 – MAM Selective Wipe: `POST /v1.0/users/{id}/wipeManagedAppRegistrationsByDeviceTag` with body `{"deviceTag": "…"}`, 204 = accepted (delegated `DeviceManagementApps.ReadWrite.All`). This is v1.0, so no /beta code exists (the earlier assumption was wrong). It removes organisation app data only; the device is not erased. It acts on a device tag, i.e. on the whole group of registrations the user has on that device; registrations without a tag are not offered. `MAMActionService` (separate from read-only discovery) re-reads the registrations before sending and compares the registration ids with the reviewed ones; one request, no retry; a 204 is "submitted", not "removed". It also gets the second confirmation alert (no typed phrase).
-- Phase 11 – Audit trail: `AuditService` appends JSON Lines to `~/Library/Logs/DeviceOffboarding/audit-YYYY-MM.jsonl` (file mode 600). A `runStarted` record is written before anything is sent, then one `operation` record per asset when the run ends (also if the workflow was reset meanwhile). Fields: timestamp, run id, mode (simulation/production), admin UPN, tenant id, target UPN and Entra user id, asset name, serial, managed device id or MAM registration ids, operation, API operation, HTTP status, result state, message (passed through `LogRedactor`). No tokens or headers are ever part of a record. A failed write is logged but never blocks or changes a run. The results screen has a "Show audit log" button. Partial success was already shown per asset on that screen.
-- Phase 12 – Hardening and packaging: extra cross-cutting tests (selective wipe in the confirmation policy, per-run cap (device actions only since the per-phone change), refused plans make no call at all); VoiceOver labels for the action choices, result icons and the mode banner; `scripts/build-pkg.sh [version]` builds the Release app (ad-hoc signed, not notarized) and wraps it in `build/DeviceOffboarding-<version>.pkg` (installs to /Applications). The script logs to the `onBoarding` Intune log folder when writable, otherwise to `build/`. Intune: the managed "line-of-business app" type requires a PKG signed with a Developer ID Installer certificate, so an unsigned PKG must be added as the **macOS app (PKG)** type (unmanaged), which accepts unsigned component packages. Not done here: nothing was compiled or run in this environment, so run `swift test` and the script on a Mac.
-- Review: see `docs/SecurityReview.md` (id check, cancellation gate before every send, no redirects or disk cache, fail-closed audit for production, non-corporate wipe warning).
-- Windows wipe options. `WipeOptions` (`keepEnrollmentData`, `keepUserData`) are the Windows-only switches of the v1.0 wipe body (Microsoft: "Uses doWipePersistProvisionedData" / "Uses doWipePersistUserData"). Both default to off (full wipe). They appear only for a Windows device whose action is Wipe Device, are cleared when the action changes, are part of the plan (changing one clears the confirmation), show in the review, the confirmation text and the audit `apiOperation`, and the executor refuses them for a device that is not Windows. `useProtectedWipe` and `obliterationBehavior` exist only in /beta and are not used. No new Graph permission is needed. Written, not compiled or run here: run `swift test` and try it on a test Windows device first.
-- Launch splash: `Config/Splash.jpg` (1600×900, shown at 800×450) appears centred on the visible screen area for 2.5 s, fades out, and only then is the main window shown (`App/SplashController.swift`). No fade when Reduce Motion is on. Replace the image file to change it.
-- UX – sidebar: `NavigationSplitView` with the signed-in administrator and tenant on top, pages User, Devices, App protection, Review (badge = number of actions), Results, and Audit log (in-app viewer), and the mode switch at the bottom. Pages open in workflow order only: Devices, App protection and Review need a confirmed user, Results needs a result. The sidebar is disabled while a run is validating or executing. The Review page is live: every action chosen on Devices or App protection updates it at once, and any change clears the acknowledgement and the typed phrase, so a confirmation always refers to the plan on screen. The workflow moves the page by itself (confirm user → Devices, run → Results). Asset pages are read-only outside the selection step.
-- `IntuneDeviceService`: GET `/v1.0/users/{id}/managedDevices?$select=…`. **Verify on first run in Graph Explorer** that this relationship path returns data in your tenant; the Microsoft docs I could search list `/deviceManagement/managedDevices` but I did not find this per-user path confirmed there. If it fails, change the path in one place (`IntuneDeviceService.discoverDevices`); the userId check still guards against foreign devices.
-- `UserService`: GET `/v1.0/users?$filter=userPrincipalName eq '…'&$select=…` with delegated `User.ReadBasic.All` (no `accountEnabled`; the identity card shows "not available"). **Verify on first run** that the UPN `$filter` works with this permission; if not, fall back to `GET /users/{upn}`.
-- `ManagedDevice`: GET `/v1.0/deviceManagement/managedDevices` (verified in docs).
-- `MAMRegistration`: list is v1.0 `GET /users/{id}/managedAppRegistrations`; selective wipe is v1.0 too (Phase 10). Entra device ID, model and manufacturer come from the beta list only (see "App protection per phone"). A selective wipe by Entra device ID (`wipeManagedAppRegistrationsByAzureAdDeviceId`) also exists only in beta and is not used.
+| Simulation mode | Settings |
+|---|---|
+| ![Simulation mode](docs/images/simulation.png) | ![Settings](docs/images/settings.png) |
+
+## Requirements
+
+- macOS 13 Ventura or later to run the app.
+- Xcode to build it (SwiftUI, Swift 5 language mode).
+- A Microsoft Entra app registration of your own and an Intune role that allows the actions you want to perform (see below).
+- No third-party dependencies.
+
+## Download
+
+Get the latest build from the [Releases page](../../releases), unzip it and move **Device Offboarding.app** to Applications. The build is ad-hoc signed and not notarized, so Control-click the app and choose **Open** the first time, or use **System Settings > Privacy & Security > Open Anyway**. The app does not remove the quarantine flag or change any security setting for you. If you prefer not to run an unsigned build, build it from source.
+
+## Build and run
+
+1. Open `DeviceOffboarding.xcodeproj` in Xcode. No team is needed: the app is ad-hoc signed.
+2. Change the bundle identifier (`com.example.deviceoffboarding` is a placeholder) to one you own.
+3. Run with ⌘R, or from Terminal:
+
+```bash
+swift test                        # core library tests
+scripts/build-pkg.sh 1.0          # optional: build/DeviceOffboarding-1.0.pkg
+```
+
+To deploy the PKG with Intune, an unsigned package must be added as the **macOS app (PKG)** type, not the managed line-of-business type. Change `identifier` in `scripts/build-pkg.sh` to your own bundle identifier first.
+
+## First launch
+
+No tenant is built in. On first launch, an administrator enters the **Tenant ID** and **Client ID** of their own Entra app registration in **Settings** (⌘,). Until both are valid GUIDs, *Sign in with Microsoft* stays disabled. The IDs are identifiers, not secrets; they are stored in this Mac's preferences.
+
+To pre-configure many Macs, push a configuration profile with the string keys `EntraClientId` and `EntraTenantId` in your app's preference domain (its bundle identifier). Managed values win and the Settings fields become read-only.
+
+## Microsoft Entra app registration
+
+1. Entra admin center > App registrations > New registration. **Single tenant**. Leave the redirect URI empty for now.
+2. Authentication > Add a platform > **Mobile and desktop applications**. Add the redirect URI `http://localhost` (exactly that: no port, no path). Entra ignores the port for loopback redirects, so the app can pick a free one.
+3. Authentication > Advanced settings > **Allow public client flows**: Yes.
+4. API permissions > Add a permission > Microsoft Graph > **Delegated**:
+   - `User.Read`
+   - `User.ReadBasic.All`
+   - `DeviceManagementManagedDevices.Read.All`
+   - `DeviceManagementApps.Read.All`
+   - `DeviceManagementManagedDevices.PrivilegedOperations.All` (Wipe)
+   - `DeviceManagementManagedDevices.ReadWrite.All` (Delete, Retire)
+   - `DeviceManagementApps.ReadWrite.All` (MAM selective wipe)
+5. Click **Grant admin consent** for the tenant.
+6. Copy the **Directory (tenant) ID** and **Application (client) ID** into the app's Settings. Do not create a client secret.
+
+Step-by-step checklist: [`docs/EntraAppRegistration.md`](docs/EntraAppRegistration.md).
+
+## Intune RBAC role
+
+Delegated permissions never exceed what the signed-in admin may do. The admin needs an Intune role that allows reading managed devices and app registrations, and, for the actions they will use, the matching **Remote tasks** (Wipe, Retire, Delete) and app protection selective wipe permissions. A missing role shows as a 403 with a plain explanation.
+
+## Using the app
+
+1. **Sign in** with *Sign in with Microsoft*. The browser opens; the app shows the signed-in admin and tenant in the sidebar.
+2. **User**: enter the UPN, check the identity card and confirm it.
+3. **Devices**: set an action per device. Windows wipes show *keep enrollment data* and *keep user data*. The page also lists devices that were left out, with the reason, and the last remote actions of each device.
+4. **App protection**: one entry per phone or tablet, with model, OS version and Entra device ID. Choosing selective wipe for a phone applies to all of its registrations.
+5. **Review**: check the plan. Acknowledge it and, for wipes, type the phrase.
+6. **Run** in simulation or switch to production. Before a production run you sign in again in the browser to confirm it is you.
+7. **Results**: each action has its own state, so partial success is shown honestly. Open the audit log from here.
+
+The sidebar is disabled while a run is in progress, and the app refuses to quit mid-run.
+
+## Safety design
+
+- **Wipe, Retire and Delete are three separate actions**, never chained, in code, UI, confirmations and logs.
+- **Accepted is not done.** Graph answers `204` when a request is accepted, not when the device has been erased. The app reports "submitted" and then checks Intune.
+- **No blind retries.** Destructive requests are sent once. A timeout or lost reply is reported as *outcome unknown*.
+- **Stale plans are refused.** If the user or a device changes between review and execution, that action is not sent.
+- **Devices are identified by Intune ID**, never by name. Duplicates are refused, wipes of non-corporate devices carry an explicit warning, and a pending wipe or retire blocks a second one.
+- **At most 5 wipe, retire or delete actions per run.** Selective wipes are not capped.
+- **macOS wipes** include a six-digit unlock PIN generated per wipe and shown once on the results screen. It is never written to a log or the audit file.
+
+## Audit log
+
+Every run appends JSON Lines to `~/Library/Logs/DeviceOffboarding/audit-YYYY-MM.jsonl` (file mode 600): timestamp, run ID, simulation or production, admin, tenant, target user, asset, serial, managed device or MAM registration IDs, operation, API call, HTTP status, result and message. A `runStarted` record is written before anything is sent. If the audit file cannot be written, a production run is not started.
+
+## Privacy and security
+
+- OAuth 2.0 authorization code flow with PKCE against Microsoft Entra ID v2.0, as a public client, in your default browser. No embedded web view and no client secret.
+- The redirect is `http://localhost:<port>`; the app listens on a free loopback port for that one redirect, then stops. If the macOS firewall asks whether the app may accept incoming connections, allow it: the listener only accepts connections from your own Mac.
+- The ID token is validated for audience, tenant and nonce, so only your tenant can sign in.
+- Nothing is persisted: the tokens live in memory only, never in the Keychain or on disk. You sign in again after each launch.
+- Requests use no redirects and no disk cache. Logging redacts tokens and authorization headers.
+- Hardened runtime is on; the app has no entitlements and no third-party code. See [`docs/SecurityReview.md`](docs/SecurityReview.md).
+
+## Known limitations
+
+- Almost everything uses Microsoft Graph **v1.0**. One read-only call is `/beta`: app protection device details (Entra device ID, model, manufacturer). It is isolated in `MAMDeviceDetailsService.swift` and optional. If it fails, the page falls back to one entry per device tag and says so.
+- What Intune's raw Graph *delete* does to the physical device is not documented by Microsoft. The portal's Delete sends Retire (or Wipe on corporate Android). Test on a spare device first.
+- Check on your tenant that the per-user device path (`/users/{id}/managedDevices`) and the UPN `$filter` work with your permissions. Each is a one-line change if not.
+- Intune cannot cancel a pending remote action. Wait for it, or remove a stale record in the Intune portal.
+- Tenant limits apply (for example, daily caps on wipes and deletes).
+- The app was written without a Mac build in the loop: run the tests and try everything in **simulation first**, then on a **test device**.
+- Choosing the right user and devices is still on you: the app cannot know that a device is shared.
+
+## License
+
+See [LICENSE](LICENSE).
