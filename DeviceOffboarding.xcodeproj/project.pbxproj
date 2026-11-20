@@ -1,0 +1,370 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		43DB49B551AE95D8234595D1 /* IntuneOffboardingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D105FC41A8740694659878 /* IntuneOffboardingApp.swift */; };
+		55A7B059539EE1AEE2541343 /* SplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E31764F1F54556B8B3A047 /* SplashController.swift */; };
+		B91C7A191191C2DC7D6ABC86 /* AuthConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B72EFA1BF8FD561D03D586A1 /* AuthConfiguration.swift */; };
+		B96FB214F25E29E804C5626A /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA827128C63D74286AA1B2 /* AuthenticationService.swift */; };
+		8C5082C4DEC6033C425782EB /* LoopbackRedirectListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260A5F694B4E13347B5CE179 /* LoopbackRedirectListener.swift */; };
+		FE85D0B1795CE4E0DC6A0D50 /* OffboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554B664E3D67527970DF97E6 /* OffboardingViewModel.swift */; };
+		328D70E68708C395C5B904BE /* ActionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3A7F0EAEA27A6A3A84F985 /* ActionPicker.swift */; };
+		682BE160513A17F80FC56C83 /* AuditLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A06D6AC8099099A980ABBC /* AuditLogView.swift */; };
+		AB6F81635DAD21BBA98021ED /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B0A29142CA5DF5E05C244C /* AuthenticationView.swift */; };
+		280C6E1BF0D07BEA19FC0FDA /* DeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA437B2BF9168673A13BF52A /* DeviceListView.swift */; };
+		F4C1E953CE02CDB514ACFE8C /* MAMListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D24D9E985CB8EB95058AE16 /* MAMListView.swift */; };
+		A13BBCF1C0209F64B6F18B26 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4230BDA2C9103A673D00122 /* ResultsView.swift */; };
+		D5C0059223D1FF27B8F6CF17 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7266D2E9CFC73B099047340 /* ReviewView.swift */; };
+		6ADA0C697FF7D5B2F477B2BB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD172D15820D3109B194BF9 /* RootView.swift */; };
+		6048379E602E5AF1C5A0B2C3 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4679120068BBAC06FAE8CDF /* SearchView.swift */; };
+		D499A8E5B27C5828F8F82B7C /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09C2AC0A507B7F87EEA44ABA /* SidebarView.swift */; };
+		D3E578A906C0985FE5C92461 /* SimulationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54896ABE534C5882C381C13 /* SimulationBanner.swift */; };
+		5D4E55D2D14731D70AEDDA47 /* UserSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424274E3B79C33BFA702D1D3 /* UserSummaryView.swift */; };
+		1E4BD6756CEA4A13879DC8F7 /* OffboardingCore in Frameworks */ = {isa = PBXBuildFile; productRef = 45644169FCD3439FC20B27DE /* OffboardingCore */; };
+		6154E165D158105590A1425C /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 8D0CACDC970E2DA7C105E3AE /* AppIcon.icns */; };
+		C8789BA527F1DB5BBA0227B8 /* Splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1DC167A0716EF1BD4AFDDF1C /* Splash.jpg */; };
+		7E5E1A0C9B3D4F6A8C2D1E01 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E5E1A0C9B3D4F6A8C2D1E02 /* SettingsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		24D105FC41A8740694659878 /* IntuneOffboardingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntuneOffboardingApp.swift; sourceTree = "<group>"; };
+		D2E31764F1F54556B8B3A047 /* SplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashController.swift; sourceTree = "<group>"; };
+		B72EFA1BF8FD561D03D586A1 /* AuthConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthConfiguration.swift; sourceTree = "<group>"; };
+		B8EA827128C63D74286AA1B2 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		260A5F694B4E13347B5CE179 /* LoopbackRedirectListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopbackRedirectListener.swift; sourceTree = "<group>"; };
+		554B664E3D67527970DF97E6 /* OffboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffboardingViewModel.swift; sourceTree = "<group>"; };
+		0D3A7F0EAEA27A6A3A84F985 /* ActionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionPicker.swift; sourceTree = "<group>"; };
+		E7A06D6AC8099099A980ABBC /* AuditLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuditLogView.swift; sourceTree = "<group>"; };
+		C7B0A29142CA5DF5E05C244C /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		AA437B2BF9168673A13BF52A /* DeviceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceListView.swift; sourceTree = "<group>"; };
+		7D24D9E985CB8EB95058AE16 /* MAMListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MAMListView.swift; sourceTree = "<group>"; };
+		F4230BDA2C9103A673D00122 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		E7266D2E9CFC73B099047340 /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		4FD172D15820D3109B194BF9 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A4679120068BBAC06FAE8CDF /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		09C2AC0A507B7F87EEA44ABA /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		C54896ABE534C5882C381C13 /* SimulationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationBanner.swift; sourceTree = "<group>"; };
+		424274E3B79C33BFA702D1D3 /* UserSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummaryView.swift; sourceTree = "<group>"; };
+		2C91516BEBFE513548721EE5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F130059427912E2BD061561 /* DeviceOffboarding.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Device Offboarding.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D0CACDC970E2DA7C105E3AE /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		1DC167A0716EF1BD4AFDDF1C /* Splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Splash.jpg; sourceTree = "<group>"; };
+		7E5E1A0C9B3D4F6A8C2D1E02 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		424153ED3CD079DB4DB459AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E4BD6756CEA4A13879DC8F7 /* OffboardingCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		518DA81DB9B99529C0C0AEBE = {
+			isa = PBXGroup;
+			children = (
+				82CF2A43A7100F086D7FCFDD /* IntuneOffboarding */,
+				1029F7BBD2FC8876965F659D /* Config */,
+				547D009064F7C3F13BEF3460 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		82CF2A43A7100F086D7FCFDD /* IntuneOffboarding */ = {
+			isa = PBXGroup;
+			children = (
+				D1D0524B025E57AFFF263442 /* App */,
+				37EB102EAD4801EFAAAF6388 /* Authentication */,
+				8C82CBDAB62AC804C92AACD0 /* ViewModels */,
+				38DF21AEF4612506D6BE5CBE /* Views */,
+			);
+			path = Sources/IntuneOffboarding;
+			sourceTree = "<group>";
+		};
+		D1D0524B025E57AFFF263442 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				24D105FC41A8740694659878 /* IntuneOffboardingApp.swift */,
+				D2E31764F1F54556B8B3A047 /* SplashController.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		37EB102EAD4801EFAAAF6388 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				B72EFA1BF8FD561D03D586A1 /* AuthConfiguration.swift */,
+				B8EA827128C63D74286AA1B2 /* AuthenticationService.swift */,
+				260A5F694B4E13347B5CE179 /* LoopbackRedirectListener.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		8C82CBDAB62AC804C92AACD0 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				554B664E3D67527970DF97E6 /* OffboardingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		38DF21AEF4612506D6BE5CBE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0D3A7F0EAEA27A6A3A84F985 /* ActionPicker.swift */,
+				E7A06D6AC8099099A980ABBC /* AuditLogView.swift */,
+				C7B0A29142CA5DF5E05C244C /* AuthenticationView.swift */,
+				AA437B2BF9168673A13BF52A /* DeviceListView.swift */,
+				7D24D9E985CB8EB95058AE16 /* MAMListView.swift */,
+				F4230BDA2C9103A673D00122 /* ResultsView.swift */,
+				E7266D2E9CFC73B099047340 /* ReviewView.swift */,
+				4FD172D15820D3109B194BF9 /* RootView.swift */,
+				A4679120068BBAC06FAE8CDF /* SearchView.swift */,
+				7E5E1A0C9B3D4F6A8C2D1E02 /* SettingsView.swift */,
+				09C2AC0A507B7F87EEA44ABA /* SidebarView.swift */,
+				C54896ABE534C5882C381C13 /* SimulationBanner.swift */,
+				424274E3B79C33BFA702D1D3 /* UserSummaryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1029F7BBD2FC8876965F659D /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				2C91516BEBFE513548721EE5 /* Info.plist */,
+				8D0CACDC970E2DA7C105E3AE /* AppIcon.icns */,
+				1DC167A0716EF1BD4AFDDF1C /* Splash.jpg */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		547D009064F7C3F13BEF3460 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F130059427912E2BD061561 /* DeviceOffboarding.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* DeviceOffboarding */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2F62AAE534BA46EC59716F3 /* Build configuration list for PBXNativeTarget "DeviceOffboarding" */;
+			buildPhases = (
+				7A70D71C385290AF96BF1031 /* Sources */,
+				424153ED3CD079DB4DB459AF /* Frameworks */,
+				285BB1C1430063331E9F5DD0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DeviceOffboarding;
+			packageProductDependencies = (
+				45644169FCD3439FC20B27DE /* OffboardingCore */,
+			);
+			productName = DeviceOffboarding;
+			productReference = 8F130059427912E2BD061561 /* DeviceOffboarding.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 7EF2517A8FE63F4681EC5EEA /* Build configuration list for PBXProject "DeviceOffboarding" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 518DA81DB9B99529C0C0AEBE;
+			packageReferences = (
+				2F6BC13275D2F0A465A84047 /* XCLocalSwiftPackageReference "." */,
+			);
+			productRefGroup = 547D009064F7C3F13BEF3460 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* DeviceOffboarding */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		285BB1C1430063331E9F5DD0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6154E165D158105590A1425C /* AppIcon.icns in Resources */,
+				C8789BA527F1DB5BBA0227B8 /* Splash.jpg in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7A70D71C385290AF96BF1031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43DB49B551AE95D8234595D1 /* IntuneOffboardingApp.swift in Sources */,
+				55A7B059539EE1AEE2541343 /* SplashController.swift in Sources */,
+				B91C7A191191C2DC7D6ABC86 /* AuthConfiguration.swift in Sources */,
+				B96FB214F25E29E804C5626A /* AuthenticationService.swift in Sources */,
+				8C5082C4DEC6033C425782EB /* LoopbackRedirectListener.swift in Sources */,
+				FE85D0B1795CE4E0DC6A0D50 /* OffboardingViewModel.swift in Sources */,
+				328D70E68708C395C5B904BE /* ActionPicker.swift in Sources */,
+				682BE160513A17F80FC56C83 /* AuditLogView.swift in Sources */,
+				AB6F81635DAD21BBA98021ED /* AuthenticationView.swift in Sources */,
+				280C6E1BF0D07BEA19FC0FDA /* DeviceListView.swift in Sources */,
+				F4C1E953CE02CDB514ACFE8C /* MAMListView.swift in Sources */,
+				A13BBCF1C0209F64B6F18B26 /* ResultsView.swift in Sources */,
+				D5C0059223D1FF27B8F6CF17 /* ReviewView.swift in Sources */,
+				6ADA0C697FF7D5B2F477B2BB /* RootView.swift in Sources */,
+				6048379E602E5AF1C5A0B2C3 /* SearchView.swift in Sources */,
+				7E5E1A0C9B3D4F6A8C2D1E01 /* SettingsView.swift in Sources */,
+				D499A8E5B27C5828F8F82B7C /* SidebarView.swift in Sources */,
+				D3E578A906C0985FE5C92461 /* SimulationBanner.swift in Sources */,
+				5D4E55D2D14731D70AEDDA47 /* UserSummaryView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C19BB360D63F1BA9F02BAB59 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		88A29AB70C762FCDF6D9A1D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		331C5106741EE8E14B752D88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.deviceoffboarding;
+				PRODUCT_NAME = "Device Offboarding";
+			};
+			name = Debug;
+		};
+		256639833029BCA847F093AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.deviceoffboarding;
+				PRODUCT_NAME = "Device Offboarding";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7EF2517A8FE63F4681EC5EEA /* Build configuration list for PBXProject "DeviceOffboarding" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C19BB360D63F1BA9F02BAB59 /* Debug */,
+				88A29AB70C762FCDF6D9A1D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2F62AAE534BA46EC59716F3 /* Build configuration list for PBXNativeTarget "DeviceOffboarding" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				331C5106741EE8E14B752D88 /* Debug */,
+				256639833029BCA847F093AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2F6BC13275D2F0A465A84047 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		45644169FCD3439FC20B27DE /* OffboardingCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OffboardingCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
